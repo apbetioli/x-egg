@@ -83,7 +83,7 @@ public class PostActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.post, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
 
         // Locate MenuItem with ShareActionProvider
         MenuItem item = menu.findItem(R.id.menu_item_share);
@@ -199,7 +199,7 @@ public class PostActivity extends FragmentActivity {
 
             ShareIntentBuilder shareIntentBuilder = new ShareIntentBuilder();
             shareIntentBuilder.withText(post.getString("description") + "\n" + post.getString("image_url"));
-//            shareIntentBuilder.withSubject(post.getString("description"));
+//            shareIntentBuilder.withSubject(menu.getString("description"));
 
             PostActivity.this.setShareIntent(shareIntentBuilder.build());
         }

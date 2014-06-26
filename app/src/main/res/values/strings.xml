@@ -5,4 +5,13 @@
     <string name="refresh">Refresh</string>
     <string name="share">Share</string>
 
+    <string name="button_image_list">Programming</string>
+    <string name="button_image_grid">TV</string>
+    <string name="button_image_pager">Worldcup</string>
+    <string name="button_image_gallery">All</string>
+
+    <string name="ac_name_image_pager">Images</string>
+
+    <string name="descr_image">Image</string>
+
 </resources>
