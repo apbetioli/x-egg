@@ -10,17 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.xegg.app.util.ApiClientUtil;
+import com.xegg.app.util.MessageUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class ImagePagerActivity extends BaseActivity {
 
-    private static final String STATE_POSITION = "STATE_POSITION";
     private DisplayImageOptions options;
     private ViewPager pager;
 
@@ -29,15 +33,26 @@ public class ImagePagerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_pager);
 
-        Bundle bundle = getIntent().getExtras();
-        assert bundle != null;
-        String[] imageUrls = bundle.getStringArray(Constants.Extra.IMAGES);
-        int pagerPosition = bundle.getInt(Constants.Extra.IMAGE_POSITION, 0);
+        createOptions();
 
-        if (savedInstanceState != null) {
-            pagerPosition = savedInstanceState.getInt(STATE_POSITION);
-        }
+        createPager(savedInstanceState);
 
+        loadImages();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(PAGE, pager.getCurrentItem());
+    }
+
+    private void createPager(Bundle savedInstanceState) {
+        pager = (ViewPager) findViewById(R.id.pager);
+
+        if (savedInstanceState != null)
+            pager.setCurrentItem(savedInstanceState.getInt(PAGE, 0));
+    }
+
+    private void createOptions() {
         options = new DisplayImageOptions.Builder()
                 .showImageForEmptyUri(R.drawable.ic_empty)
                 .showImageOnFail(R.drawable.ic_error)
@@ -48,24 +63,46 @@ public class ImagePagerActivity extends BaseActivity {
                 .considerExifParams(true)
                 .displayer(new FadeInBitmapDisplayer(300))
                 .build();
-
-        pager = (ViewPager) findViewById(R.id.pager);
-        pager.setAdapter(new ImagePagerAdapter(imageUrls));
-        pager.setCurrentItem(pagerPosition);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(STATE_POSITION, pager.getCurrentItem());
+    private void loadImages() {
+
+        ApiClientUtil.GetPostsTask task = new ApiClientUtil.GetPostsTask() {
+            @Override
+            protected void onPostExecute(String postsString) {
+
+                if(postsString == null) {
+                    //TODO melhorar
+                    MessageUtil.handle(ImagePagerActivity.this, "Erro ao acessar api");
+                    return;
+                }
+
+                try {
+                    JSONArray postsArray = new JSONArray(postsString);
+                    pager.setAdapter(new ImagePagerAdapter(postsArray));
+                } catch (Exception e) {
+                    //TODO melhorar
+                    e.printStackTrace();
+                    MessageUtil.handle(ImagePagerActivity.this, "Erro ao converter dados: " + e.getMessage());
+                }
+            }
+        };
+
+        task.execute(currentTag());
+    }
+
+    private String currentTag() {
+        Bundle bundle = getIntent().getExtras();
+        return bundle != null ? bundle.getString(TAG) : null;
     }
 
     private class ImagePagerAdapter extends PagerAdapter {
 
-        private String[] images;
-        private LayoutInflater inflater;
+        private final JSONArray postArray;
+        private final LayoutInflater inflater;
 
-        ImagePagerAdapter(String[] images) {
-            this.images = images;
+        ImagePagerAdapter(JSONArray postArray) {
+            this.postArray = postArray;
             inflater = getLayoutInflater();
         }
 
@@ -76,54 +113,47 @@ public class ImagePagerActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return images.length;
+            return postArray.length();
         }
 
         @Override
         public Object instantiateItem(ViewGroup view, int position) {
             View imageLayout = inflater.inflate(R.layout.item_pager_image, view, false);
-            assert imageLayout != null;
-            final ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
-            final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
 
-            imageLoader.displayImage(images[position], imageView, options, new SimpleImageLoadingListener() {
-                @Override
-                public void onLoadingStarted(String imageUri, View view) {
-                    spinner.setVisibility(View.VISIBLE);
-                }
+            final ImageView image = (ImageView) imageLayout.findViewById(R.id.image);
+            final ProgressBar loading = (ProgressBar) imageLayout.findViewById(R.id.loading);
 
-                @Override
-                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                    String message = null;
-                    switch (failReason.getType()) {
-                        case IO_ERROR:
-                            message = "Input/Output error";
-                            break;
-                        case DECODING_ERROR:
-                            message = "Image can't be decoded";
-                            break;
-                        case NETWORK_DENIED:
-                            message = "Downloads are denied";
-                            break;
-                        case OUT_OF_MEMORY:
-                            message = "Out Of Memory error";
-                            break;
-                        case UNKNOWN:
-                            message = "Unknown error";
-                            break;
+            try {
+                String uri = postArray.getJSONObject(position).getString("image_url");
+
+                ImageLoader.getInstance().displayImage(uri, image, options, new SimpleImageLoadingListener() {
+
+                    @Override
+                    public void onLoadingStarted(String imageUri, View view) {
+                        loading.setVisibility(View.VISIBLE);
                     }
-                    Toast.makeText(ImagePagerActivity.this, message, Toast.LENGTH_SHORT).show();
 
-                    spinner.setVisibility(View.GONE);
-                }
+                    @Override
+                    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                        MessageUtil.handle(ImagePagerActivity.this, failReason);
 
-                @Override
-                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                    spinner.setVisibility(View.GONE);
-                }
-            });
+                        loading.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        loading.setVisibility(View.GONE);
+                    }
+                });
+
+            } catch (JSONException e) {
+                //TODO tratar
+                e.printStackTrace();
+                MessageUtil.handle(ImagePagerActivity.this, "Erro ao converter dados: " + e.getMessage());
+            }
 
             view.addView(imageLayout, 0);
+
             return imageLayout;
         }
 
