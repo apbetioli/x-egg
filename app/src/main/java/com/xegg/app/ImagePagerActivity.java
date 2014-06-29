@@ -2,7 +2,6 @@ package com.xegg.app;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -18,6 +17,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.xegg.app.util.ApiClientUtil;
+import com.xegg.app.util.Constants;
 import com.xegg.app.util.MessageUtil;
 
 import org.json.JSONArray;
@@ -119,12 +119,13 @@ public class ImagePagerActivity extends BaseActivity {
         @Override
         public Object instantiateItem(ViewGroup view, int position) {
             View imageLayout = inflater.inflate(R.layout.item_pager_image, view, false);
+            view.addView(imageLayout, 0);
 
             final ImageView image = (ImageView) imageLayout.findViewById(R.id.image);
             final ProgressBar loading = (ProgressBar) imageLayout.findViewById(R.id.loading);
 
             try {
-                String uri = postArray.getJSONObject(position).getString("image_url");
+                String uri = postArray.getJSONObject(position).getString(Constants.ATR_IMAGE);
 
                 ImageLoader.getInstance().displayImage(uri, image, options, new SimpleImageLoadingListener() {
 
@@ -152,15 +153,13 @@ public class ImagePagerActivity extends BaseActivity {
                 MessageUtil.handle(ImagePagerActivity.this, "Erro ao converter dados: " + e.getMessage());
             }
 
-            view.addView(imageLayout, 0);
-
             return imageLayout;
         }
-
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view.equals(object);
         }
+        /*
 
         @Override
         public void restoreState(Parcelable state, ClassLoader loader) {
@@ -170,5 +169,6 @@ public class ImagePagerActivity extends BaseActivity {
         public Parcelable saveState() {
             return null;
         }
+        */
     }
 }

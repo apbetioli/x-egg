@@ -6,4 +6,6 @@ public interface Constants {
 
     String TAG = "TAG";
     String PAGE = "PAGE";
+
+    String ATR_IMAGE = "image";
 }

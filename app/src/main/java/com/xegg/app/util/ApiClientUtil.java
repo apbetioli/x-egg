@@ -12,7 +12,7 @@ import java.io.ByteArrayOutputStream;
 
 public class ApiClientUtil {
 
-    private static final String URL = "http://laughtime-apbetioli.rhcloud.com/posts.json";
+    private static final String URL = "http://www.x-egg.com/api/posts";
 
     public static class GetPostsTask extends AsyncTask<String, Void, String> {
 
@@ -21,8 +21,10 @@ public class ApiClientUtil {
                 String tag = param.length > 0 ? param[0] : null;
                 String url = URL + (tag != null ? "?tag=" + tag : "");
 
-                HttpClient client = new DefaultHttpClient();
                 HttpGet get = new HttpGet(url);
+                get.addHeader("Content-Type", "application/json");
+
+                HttpClient client = new DefaultHttpClient();
                 HttpResponse response = client.execute(get);
 
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -30,7 +32,8 @@ public class ApiClientUtil {
                 HttpEntity entity = response.getEntity();
                 entity.writeTo(os);
 
-                return os.toString();
+                String content = os.toString();
+                return content;
 
             } catch (Exception e) {
                 //TODO
