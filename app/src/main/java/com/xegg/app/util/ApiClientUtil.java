@@ -12,14 +12,14 @@ import java.io.ByteArrayOutputStream;
 
 public class ApiClientUtil {
 
-    private static final String URL = "http://www.x-egg.com/api/posts";
+    private static final String URL = "http://www.x-egg.com/api/v1/posts";
 
     public static class GetPostsTask extends AsyncTask<String, Void, String> {
 
         protected String doInBackground(String... param) {
             try {
                 String tag = param.length > 0 ? param[0] : null;
-                String url = URL + (tag != null ? "?tag=" + tag : "");
+                String url = URL;// + (tag != null ? "?tag=" + tag : "");
 
                 HttpGet get = new HttpGet(url);
                 get.addHeader("Content-Type", "application/json");
