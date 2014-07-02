@@ -1,29 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="wrap_content"
+    android:background="#fbffdf">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical" >
-
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/blue"
+        android:id="@+id/btn1"
+        android:baselineAligned="true"
+        android:layout_marginTop="2dp">
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textSize="70px"
+            android:textStyle="bold"
+            android:textAllCaps="true"
             android:gravity="center"
-            android:paddingBottom="10dip"
-            android:paddingTop="20dip"
-            android:text="@string/app_name"
-            android:textSize="24sp" />
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dip"
-            android:onClick="onImagePagerClick"
-            android:text="@string/button_image_pager" />
-
+            android:textColor="#ffffff"
+            android:text="Programming" />
     </LinearLayout>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/red"
+        android:id="@+id/btn2"
+        android:baselineAligned="true"
+        android:layout_marginTop="2dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textSize="70px"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:textColor="#ffffff"
+            android:text="Cats" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/green"
+        android:id="@+id/btn3"
+        android:baselineAligned="true"
+        android:layout_marginTop="2dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textSize="70px"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:textColor="#ffffff"
+            android:text="Dogs" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/green"
+        android:id="@+id/btn4"
+        android:baselineAligned="true"
+        android:layout_marginTop="2dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textSize="70px"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:textColor="#ffffff"
+            android:text="Dogs" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/green"
+        android:id="@+id/btn5"
+        android:baselineAligned="true"
+        android:layout_marginTop="2dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textSize="70px"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:textColor="#ffffff"
+            android:text="Dogs" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/green"
+        android:id="@+id/btn6"
+        android:baselineAligned="true"
+        android:layout_marginTop="2dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textSize="70px"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:textColor="#ffffff"
+            android:text="Dogs" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/green"
+        android:id="@+id/btn7"
+        android:baselineAligned="true"
+        android:layout_marginTop="2dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textSize="70px"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:textColor="#ffffff"
+            android:text="Dogs" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/blue"
+        android:id="@+id/bt8"
+        android:baselineAligned="true"
+        android:layout_marginTop="2dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textSize="70px"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:text="Programming" />
+    </LinearLayout>
+</LinearLayout>
 </ScrollView>
