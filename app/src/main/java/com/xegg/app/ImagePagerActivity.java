@@ -33,6 +33,8 @@ public class ImagePagerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_pager);
 
+        getActionBar().setTitle("#"+currentTag());
+
         createOptions();
 
         createPager(savedInstanceState);
@@ -71,15 +73,17 @@ public class ImagePagerActivity extends BaseActivity {
             @Override
             protected void onPostExecute(String postsString) {
 
-                if(postsString == null) {
-                    //TODO melhorar
-                    MessageUtil.handle(ImagePagerActivity.this, "Erro ao acessar api");
-                    return;
-                }
-
                 try {
                     JSONArray postsArray = new JSONArray(postsString);
+
+                    //TODO melhorar
+                    if(postsArray.length() == 0) {
+                        MessageUtil.handle(ImagePagerActivity.this, "Nenhum post nesta categoria");
+                        return;
+                    }
+
                     pager.setAdapter(new ImagePagerAdapter(postsArray));
+
                 } catch (Exception e) {
                     //TODO melhorar
                     e.printStackTrace();
@@ -123,6 +127,7 @@ public class ImagePagerActivity extends BaseActivity {
 
             final ImageView image = (ImageView) imageLayout.findViewById(R.id.image);
             final ProgressBar loading = (ProgressBar) imageLayout.findViewById(R.id.loading);
+            loading.setVisibility(View.VISIBLE);
 
             try {
                 String uri = postArray.getJSONObject(position).getString(Constants.ATR_IMAGE);
@@ -159,8 +164,7 @@ public class ImagePagerActivity extends BaseActivity {
         public boolean isViewFromObject(View view, Object object) {
             return view.equals(object);
         }
-        /*
-
+/*
         @Override
         public void restoreState(Parcelable state, ClassLoader loader) {
         }

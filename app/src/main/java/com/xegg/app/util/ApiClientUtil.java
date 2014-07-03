@@ -9,36 +9,50 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class ApiClientUtil {
 
-    private static final String URL = "http://www.x-egg.com/api/v1/posts";
+    private static final String URL_API = "http://www.x-egg.com/api/v1";
+    private static final String URL_POSTS = URL_API + "/posts";
+    private static final String URL_TAGS = URL_API + "/tags";
+
+    private static String getJsonFromURL(String url) {
+        try {
+            HttpGet get = new HttpGet(url);
+            get.addHeader("Content-Type", "application/json");
+
+            HttpClient client = new DefaultHttpClient();
+            HttpResponse response = client.execute(get);
+
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+            HttpEntity entity = response.getEntity();
+            entity.writeTo(os);
+
+            return os.toString();
+
+        } catch (Exception e) {
+            //TODO
+            throw new RuntimeException(e);
+        }
+    }
 
     public static class GetPostsTask extends AsyncTask<String, Void, String> {
 
         protected String doInBackground(String... param) {
-            try {
-                String tag = param.length > 0 ? param[0] : null;
-                String url = URL;// + (tag != null ? "?tag=" + tag : "");
+            String tag = param.length > 0 ? param[0] : null;
+            String url = URL_POSTS + (tag != null ? "?tag=" + tag : "");
 
-                HttpGet get = new HttpGet(url);
-                get.addHeader("Content-Type", "application/json");
+            return getJsonFromURL(url);
+        }
+    }
 
-                HttpClient client = new DefaultHttpClient();
-                HttpResponse response = client.execute(get);
+    public static class GetTagsTask extends AsyncTask<String, Void, String> {
 
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
+        protected String doInBackground(String... param) {
+            return getJsonFromURL(URL_TAGS);
 
-                HttpEntity entity = response.getEntity();
-                entity.writeTo(os);
-
-                String content = os.toString();
-                return content;
-
-            } catch (Exception e) {
-                //TODO
-                throw new RuntimeException(e);
-            }
         }
     }
 
