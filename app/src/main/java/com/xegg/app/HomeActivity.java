@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -48,14 +49,15 @@ public class HomeActivity extends BaseActivity {
 
         for (String tag : tags) {
             final String tagRox = tag;
-            LinearLayout child = new LinearLayout(this);
+            final LinearLayout child = new LinearLayout(this);
+            Random random = new Random();
+            final int colorSelected = color[random.nextInt(color.length)];
+            child.setClickable(true);
             child.setOrientation(LinearLayout.HORIZONTAL);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 220);
-
             params.setMargins(0, 4, 0, 0);
-            Random random = new Random();
             child.setLayoutParams(params);
-            child.setBackground(getResources().getDrawable(color[random.nextInt(color.length)]));
+           // child.setBackground(getResources().getDrawable(colorSelected));
             child.setBaselineAligned(true);
 
             TextView tv1 = new TextView(this);
@@ -73,6 +75,12 @@ public class HomeActivity extends BaseActivity {
 
             main.addView(child);
 
+            StateListDrawable states = new StateListDrawable();
+            states.addState(new int[]{android.R.attr.state_pressed}, getResources().getDrawable(R.drawable.blue));
+            //states.addState(new int[]{android.R.attr.state_focused}, getResources().getDrawable(R.drawable.green));
+            states.addState(new int[]{}, getResources().getDrawable(colorSelected));
+
+            child.setBackground(states);
             child.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -80,6 +88,8 @@ public class HomeActivity extends BaseActivity {
                     Intent intent = new Intent(v.getContext(), ImagePagerActivity.class);
                     intent.putExtra(TAG, tagRox); //TODO pegar da categoria selecionada na tela
                     startActivity(intent);
+
+
                 }
             });
         }
