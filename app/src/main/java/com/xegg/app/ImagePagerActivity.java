@@ -33,7 +33,7 @@ public class ImagePagerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_pager);
 
-        getActionBar().setTitle("#"+currentTag());
+        getActionBar().setTitle("#" + currentTag());
 
         createOptions();
 
@@ -77,7 +77,7 @@ public class ImagePagerActivity extends BaseActivity {
                     JSONArray postsArray = new JSONArray(postsString);
 
                     //TODO melhorar
-                    if(postsArray.length() == 0) {
+                    if (postsArray.length() == 0) {
                         MessageUtil.handle(ImagePagerActivity.this, "Nenhum post nesta categoria");
                         return;
                     }
@@ -160,6 +160,7 @@ public class ImagePagerActivity extends BaseActivity {
 
             return imageLayout;
         }
+
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view.equals(object);

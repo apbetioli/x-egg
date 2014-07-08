@@ -16,7 +16,7 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-      final LinearLayout l = (LinearLayout) findViewById(R.id.btn1);
+        final LinearLayout l = (LinearLayout) findViewById(R.id.btn1);
 
         l.setOnClickListener(new View.OnClickListener() {
 
@@ -30,8 +30,7 @@ public class HomeActivity extends BaseActivity {
 
             public boolean onTouch(View v, MotionEvent event) {
                 // TODO Auto-generated method stub
-                switch(event.getAction())
-                {
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         l.setBackgroundColor(Color.RED);
                         break;
@@ -43,7 +42,7 @@ public class HomeActivity extends BaseActivity {
                 }
                 return true;
             }
-        } );
+        });
     }
 
     @Override
