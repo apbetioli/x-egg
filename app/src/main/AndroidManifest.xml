@@ -52,6 +52,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.xegg.app.HomeActivity" />
         </activity>
+        <activity
+            android:name=".GifActivity"
+            android:label="@string/title_activity_gif" >
+        </activity>
     </application>
 
 </manifest>
