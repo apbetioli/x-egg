@@ -16,6 +16,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.xegg.app.util.AnimatedGifImageView;
 import com.xegg.app.util.ApiClientUtil;
 import com.xegg.app.util.Constants;
 import com.xegg.app.util.MessageUtil;
@@ -27,6 +28,7 @@ public class ImagePagerActivity extends BaseActivity {
 
     private DisplayImageOptions options;
     private ViewPager pager;
+    private AnimatedGifImageView animatedGifImageView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

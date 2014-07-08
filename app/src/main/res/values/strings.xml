@@ -4,16 +4,15 @@
     <string name="app_name">X-Egg</string>
     <string name="refresh">Refresh</string>
     <string name="share">Share</string>
-
     <string name="button_image_pager">#programming</string>
-
     <string name="ac_name_image_pager">Images</string>
-
     <string name="descr_image">Image</string>
-
     <string name="menu_item_clear_memory_cache">Clear memory cache</string>
     <string name="menu_item_clear_disc_cache">Clear disc cache</string>
     <string name="menu_item_pause_on_scroll">Pause on scroll</string>
     <string name="menu_item_pause_on_fling">Pause on fling</string>
+    <string name="title_activity_gif">Gif</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

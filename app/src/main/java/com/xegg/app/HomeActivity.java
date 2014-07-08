@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.xegg.app.util.ColorsUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,19 +46,17 @@ public class HomeActivity extends BaseActivity {
         tags.add("Comic");
         tags.add("WTF");
         tags.add("gif");
-        int color[] = {red, blue, green};
 
         for (String tag : tags) {
             final String tagRox = tag;
             final LinearLayout child = new LinearLayout(this);
-            Random random = new Random();
-            final int colorSelected = color[random.nextInt(color.length)];
+
+            final int colorSelected = ColorsUtil.colors.get(tag.toLowerCase().substring(0, 1));
             child.setClickable(true);
             child.setOrientation(LinearLayout.HORIZONTAL);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 220);
             params.setMargins(0, 4, 0, 0);
             child.setLayoutParams(params);
-           // child.setBackground(getResources().getDrawable(colorSelected));
             child.setBaselineAligned(true);
 
             TextView tv1 = new TextView(this);
@@ -76,8 +75,7 @@ public class HomeActivity extends BaseActivity {
             main.addView(child);
 
             StateListDrawable states = new StateListDrawable();
-            states.addState(new int[]{android.R.attr.state_pressed}, getResources().getDrawable(R.drawable.blue));
-            //states.addState(new int[]{android.R.attr.state_focused}, getResources().getDrawable(R.drawable.green));
+            states.addState(new int[]{android.R.attr.state_pressed}, getResources().getDrawable(R.drawable.gray));
             states.addState(new int[]{}, getResources().getDrawable(colorSelected));
 
             child.setBackground(states);
@@ -85,11 +83,13 @@ public class HomeActivity extends BaseActivity {
 
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), ImagePagerActivity.class);
+                    Intent intent = null;
+                    if (tagRox.equals("gif"))
+                        intent = new Intent(v.getContext(), GifActivity.class);
+                    else
+                        intent = new Intent(v.getContext(), ImagePagerActivity.class);
                     intent.putExtra(TAG, tagRox); //TODO pegar da categoria selecionada na tela
                     startActivity(intent);
-
-
                 }
             });
         }
@@ -105,6 +105,6 @@ public class HomeActivity extends BaseActivity {
     public void onImagePagerClick(View view) {
         Intent intent = new Intent(this, ImagePagerActivity.class);
         intent.putExtra(TAG, "programming"); //TODO pegar da categoria selecionada na tela
-        startActivity(intent);
+
     }
 }
