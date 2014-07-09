@@ -127,14 +127,14 @@ public class ImagePagerActivity extends BaseActivity {
             View imageLayout = inflater.inflate(R.layout.item_pager_image, view, false);
             view.addView(imageLayout, 0);
 
-            final ImageView image = (ImageView) imageLayout.findViewById(R.id.image);
+            final ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
             final ProgressBar loading = (ProgressBar) imageLayout.findViewById(R.id.loading);
             loading.setVisibility(View.VISIBLE);
 
             try {
                 String uri = postArray.getJSONObject(position).getString(Constants.ATR_IMAGE);
 
-                ImageLoader.getInstance().displayImage(uri, image, options, new SimpleImageLoadingListener() {
+                ImageLoader.getInstance().displayImage(uri, imageView, options, new SimpleImageLoadingListener() {
 
                     @Override
                     public void onLoadingStarted(String imageUri, View view) {
