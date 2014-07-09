@@ -2,6 +2,7 @@ package com.xegg.app;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -19,10 +20,17 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.xegg.app.util.AnimatedGifImageView;
 import com.xegg.app.util.ApiClientUtil;
 import com.xegg.app.util.Constants;
+import com.xegg.app.util.ImageViewXegg;
 import com.xegg.app.util.MessageUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class ImagePagerActivity extends BaseActivity {
 
@@ -33,6 +41,8 @@ public class ImagePagerActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_image_pager);
 
         getActionBar().setTitle("#" + currentTag());
@@ -127,12 +137,13 @@ public class ImagePagerActivity extends BaseActivity {
             View imageLayout = inflater.inflate(R.layout.item_pager_image, view, false);
             view.addView(imageLayout, 0);
 
-            final ImageView image = (ImageView) imageLayout.findViewById(R.id.image);
+            final ImageViewXegg image = (ImageViewXegg) imageLayout.findViewById(R.id.image);
             final ProgressBar loading = (ProgressBar) imageLayout.findViewById(R.id.loading);
             loading.setVisibility(View.VISIBLE);
 
             try {
                 String uri = postArray.getJSONObject(position).getString(Constants.ATR_IMAGE);
+                System.out.println("------------------- " + uri);
 
                 ImageLoader.getInstance().displayImage(uri, image, options, new SimpleImageLoadingListener() {
 
@@ -151,6 +162,19 @@ public class ImagePagerActivity extends BaseActivity {
                     @Override
                     public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                         loading.setVisibility(View.GONE);
+                        if (imageUri.contains(".gif")) {
+                            try {
+                                URL gifURL = new URL(imageUri);
+                                HttpURLConnection connection = (HttpURLConnection) gifURL.openConnection();
+                                image.setAnimatedGif(connection.getInputStream(), ImageViewXegg.TYPE.FIT_CENTER);
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            } catch (MalformedURLException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 });
 

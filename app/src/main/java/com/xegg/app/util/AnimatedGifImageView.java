@@ -92,9 +92,25 @@ public class AnimatedGifImageView extends ImageView {
 		}
 		p = new Paint();
 	}
-	
 
-	@Override
+    public void setAnimatedGif(InputStream is, TYPE streachType) throws FileNotFoundException {
+        setImageBitmap(null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
+        mType = streachType;
+        animatedGifImage = true;
+
+        try {
+            mMovie = Movie.decodeStream(is);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        p = new Paint();
+    }
+
+
+    @Override
 	public void setImageResource(int resId) {
 		animatedGifImage = false;
 		super.setImageResource(resId);
@@ -119,7 +135,7 @@ public class AnimatedGifImageView extends ImageView {
 	private float mLeft;
 	private float mTop;
 
-	private static byte[] streamToBytes(InputStream is) {
+	public static byte[] streamToBytes(InputStream is) {
 		ByteArrayOutputStream os = new ByteArrayOutputStream(1024);
 		byte[] buffer = new byte[1024];
 		int len;
