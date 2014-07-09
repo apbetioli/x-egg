@@ -137,7 +137,9 @@ public class ImagePagerActivity extends BaseActivity {
             View imageLayout = inflater.inflate(R.layout.item_pager_image, view, false);
             view.addView(imageLayout, 0);
 
-            final ImageViewXegg image = (ImageViewXegg) imageLayout.findViewById(R.id.image);
+
+            final ImageViewXegg imageView = (ImageViewXegg) imageLayout.findViewById(R.id.image);
+
             final ProgressBar loading = (ProgressBar) imageLayout.findViewById(R.id.loading);
             loading.setVisibility(View.VISIBLE);
 
@@ -145,7 +147,7 @@ public class ImagePagerActivity extends BaseActivity {
                 String uri = postArray.getJSONObject(position).getString(Constants.ATR_IMAGE);
                 System.out.println("------------------- " + uri);
 
-                ImageLoader.getInstance().displayImage(uri, image, options, new SimpleImageLoadingListener() {
+                ImageLoader.getInstance().displayImage(uri, imageView, options, new SimpleImageLoadingListener() {
 
                     @Override
                     public void onLoadingStarted(String imageUri, View view) {
@@ -166,7 +168,7 @@ public class ImagePagerActivity extends BaseActivity {
                             try {
                                 URL gifURL = new URL(imageUri);
                                 HttpURLConnection connection = (HttpURLConnection) gifURL.openConnection();
-                                image.setAnimatedGif(connection.getInputStream(), ImageViewXegg.TYPE.FIT_CENTER);
+                                imageView.setAnimatedGif(connection.getInputStream(), ImageViewXegg.TYPE.FIT_CENTER);
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
                             } catch (MalformedURLException e) {
