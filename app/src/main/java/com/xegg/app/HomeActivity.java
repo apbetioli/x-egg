@@ -10,17 +10,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.xegg.app.util.ApiClientUtil;
 import com.xegg.app.util.ColorsUtil;
 
 public class HomeActivity extends BaseActivity {
-
-    @Override
-    public void onBackPressed() {
-        ImageLoader.getInstance().stop();
-        super.onBackPressed();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

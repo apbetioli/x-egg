@@ -12,7 +12,6 @@ import com.xegg.app.util.AndroidUtil;
 import com.xegg.app.util.ApiClientUtil;
 import com.xegg.app.util.MessageUtil;
 
-import java.util.List;
 import java.util.Locale;
 
 public class NewPostActivity extends BaseActivity {

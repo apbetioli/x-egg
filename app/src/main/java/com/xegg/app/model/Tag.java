@@ -16,14 +16,6 @@ public class Tag implements Model {
     public Tag() {
     }
 
-    public Tag(JSONObject json) throws JSONException {
-        name = json.getString("name");
-        image = json.getString("image");
-        language = json.getString("language");
-        country = json.getString("country");
-        created = json.getString("created");
-    }
-
     @Override
     public JSONObject toJSONObject() throws JSONException {
         JSONObject json = new JSONObject();

@@ -1,30 +1,26 @@
 package com.xegg.app;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 import com.xegg.app.model.Post;
-import com.xegg.app.util.ApiClientUtil;
+import com.xegg.app.util.Constants;
 import com.xegg.app.util.MessageUtil;
-import com.xegg.app.util.XEggImageView;
 
 import java.util.List;
 
 public class ImagePagerActivity extends BaseActivity {
 
-    private DisplayImageOptions options;
     private ViewPager pager;
+
+    //TODO lidar com multiplas tags
     private int currentPage;
 
     @Override
@@ -35,8 +31,6 @@ public class ImagePagerActivity extends BaseActivity {
 
         getActionBar().setTitle(currentTag());
 
-        createDisplayImageOptions();
-
         fetchPosts();
     }
 
@@ -45,24 +39,28 @@ public class ImagePagerActivity extends BaseActivity {
     }
 
     private void fetchPosts() {
-        ApiClientUtil.GetPostsTask task = new ApiClientUtil.GetPostsTask() {
 
-            @Override
-            protected void onPostExecute(List<Post> posts) {
-                super.onPostExecute(posts);
+        String tag = currentTag();
+        String url = Constants.URL_POSTS + (tag != null ? "?tag=" + tag : "");
 
-                if (posts.isEmpty()) {
-                    //TODO I18N
-                    MessageUtil.handle(ImagePagerActivity.this, "Nenhum post nesta categoria");
-                    moveTaskToBack(true);
-                    return;
-                }
+        Ion.with(this)
+                .load(url)
+                .as(new TypeToken<List<Post>>(){})
+                .setCallback(new FutureCallback<List<Post>>() {
+                    @Override
+                    public void onCompleted(Exception e, List<Post> posts) {
 
-                loadPagerSavedState(posts);
+                        if (posts.isEmpty()) {
+                            //TODO I18N
+                            MessageUtil.handle(ImagePagerActivity.this, "Nenhum post nesta categoria");
+                            moveTaskToBack(true);
+                            return;
+                        }
 
-            }
-        };
-        task.execute(currentTag());
+                        loadPagerSavedState(posts);
+
+                    }
+                });
 
     }
 
@@ -75,19 +73,6 @@ public class ImagePagerActivity extends BaseActivity {
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(new ImagePagerAdapter(posts));
         pager.setCurrentItem(currentPage);
-    }
-
-    private void createDisplayImageOptions() {
-        options = new DisplayImageOptions.Builder()
-                .showImageForEmptyUri(R.drawable.ic_empty)
-                .showImageOnFail(R.drawable.ic_error)
-                .resetViewBeforeLoading(true)
-                .cacheOnDisk(true)
-                .imageScaleType(ImageScaleType.EXACTLY)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .considerExifParams(true)
-                .displayer(new FadeInBitmapDisplayer(300))
-                .build();
     }
 
     private String currentTag() {
@@ -117,44 +102,22 @@ public class ImagePagerActivity extends BaseActivity {
             View imageLayout = getLayoutInflater().inflate(R.layout.item_pager_image, view, false);
             view.addView(imageLayout, 0);
 
-            final ProgressBar loading = (ProgressBar) imageLayout.findViewById(R.id.loading);
-            final XEggImageView imageView = (XEggImageView) imageLayout.findViewById(R.id.image);
+            ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
 
             if (!posts.isEmpty()) {
                 Post post = posts.get(position);
-                ImageLoader.getInstance().displayImage(post.getImage(), imageView, options, new SimpleImageLoadingListener() {
 
-                    @Override
-                    public void onLoadingStarted(String imageUri, View view) {
-                        loading.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                        MessageUtil.handle(ImagePagerActivity.this, failReason);
-                        loading.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap bitmap) {
-                        loading.setVisibility(View.GONE);
-//                        try {
-//                            File file = ImageLoader.getInstance().getDiskCache().get(imageUri);
-//                            ((XEggImageView) view).setAnimatedGif(new FileInputStream(file), XEggImageView.TYPE.FIT_CENTER);
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-                    }
-
-                    @Override
-                    public void onLoadingCancelled(String imageUri, View view) {
-                        loading.setVisibility(View.GONE);
-                    }
-                });
+                Ion.with(imageView)
+//                        .placeholder(R.drawable.placeholder_image)
+                        .error(R.drawable.ic_error)
+//                        .animateLoad(spinAnimation)
+//                        .animateIn(fadeInAnimation)
+                        .load(post.getImage());
             }
 
             return imageLayout;
         }
+
 
         @Override
         public boolean isViewFromObject(View view, Object object) {

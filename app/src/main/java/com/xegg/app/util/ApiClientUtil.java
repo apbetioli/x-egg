@@ -3,7 +3,6 @@ package com.xegg.app.util;
 import android.os.AsyncTask;
 
 import com.xegg.app.model.Model;
-import com.xegg.app.model.Post;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -12,8 +11,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -30,32 +27,6 @@ public class ApiClientUtil {
         } catch (Exception e) {
             //TODO
             e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static String getJsonFromURL(String url) {
-        try {
-            HttpGet get = new HttpGet(url);
-            get.addHeader("Content-Type", "application/json");
-
-            HttpClient client = new DefaultHttpClient();
-            HttpResponse response = client.execute(get);
-
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200)
-                throw new IllegalStateException(String.valueOf(statusCode));
-
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-            HttpEntity entity = response.getEntity();
-            entity.writeTo(os);
-
-            return os.toString();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            //TODO
             throw new RuntimeException(e);
         }
     }
@@ -107,46 +78,6 @@ public class ApiClientUtil {
     public static String[] listTagsAsArray() {
         List<String> tags = listTags();
         return tags.toArray(new String[tags.size()]);
-    }
-
-    //TODO private
-    public static class GetPostsTask extends AsyncTask<String, Void, List<Post>> {
-
-        protected List<Post> doInBackground(String... param) {
-            String tag = param.length > 0 ? param[0] : null;
-            String url = Constants.URL_POSTS + (tag != null ? "?tag=" + tag : "");
-
-            List<Post> posts = new ArrayList<Post>();
-            try {
-                JSONArray postsArray = new JSONArray(getJsonFromURL(url));
-
-                for (int i = 0; i < postsArray.length(); i++) {
-                    JSONObject jsonObject = postsArray.getJSONObject(i);
-                    Post post = new Post(jsonObject);
-                    posts.add(post);
-                }
-
-            } catch (JSONException e) {
-                //TODO
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-
-            return posts;
-        }
-    }
-
-    private static class FindTask extends AsyncTask<String, Void, String> {
-
-        private final String url;
-
-        public FindTask(String url) {
-            this.url = url;
-        }
-
-        protected String doInBackground(String... param) {
-            return getJsonFromURL(url);
-        }
     }
 
     private static class SaveTask extends AsyncTask<JSONObject, Void, String> {

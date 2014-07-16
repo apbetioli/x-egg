@@ -18,16 +18,6 @@ public class Post implements Model {
     public Post() {
     }
 
-    public Post(JSONObject json) {
-        try { description = json.getString("description"); } catch(JSONException e) {};
-        try { image = json.getString("image"); } catch(JSONException e) {};
-        try { author = json.getString("author"); } catch(JSONException e) {};
-        try { language = json.getString("language"); } catch(JSONException e) {};
-        try { country = json.getString("country"); } catch(JSONException e) {};
-        try { tag = json.getString("tag"); } catch(JSONException e) {};
-        try { created = json.getString("created"); } catch(JSONException e) {};
-    }
-
     @Override
     public JSONObject toJSONObject() throws JSONException {
         JSONObject json = new JSONObject();
