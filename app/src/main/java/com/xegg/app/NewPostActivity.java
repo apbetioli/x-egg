@@ -9,35 +9,13 @@ import android.widget.Spinner;
 
 import com.xegg.app.model.Post;
 import com.xegg.app.util.AndroidUtil;
+import com.xegg.app.util.ApiClientUtil;
 import com.xegg.app.util.MessageUtil;
 
+import java.util.List;
+import java.util.Locale;
+
 public class NewPostActivity extends BaseActivity {
-
-    //TODO pegar das tags reais
-    private String[] tags = new String[] 
-    {
-        "programming",
-        "cats",
-        "dogs",
-        "girls",
-        "world cup",
-        "NSFW",
-        "cosplay",
-        "food",
-        "Comic",
-        "WTF",
-        "gif"
-    };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_post);
-
-        Spinner combo = (Spinner) findViewById(R.id.tag);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, tags);
-        combo.setAdapter(adapter);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -56,6 +34,24 @@ public class NewPostActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_post);
+
+        populateTags();
+    }
+
+    private void populateTags() {
+        String[] tags = ApiClientUtil.listTagsAsArray();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, tags);
+
+        Spinner tagCombo = (Spinner) findViewById(R.id.tag);
+        tagCombo.setAdapter(adapter);
+    }
+
+
     private void saveAndRedirect() {
         saveNewPost();
         redirectToNewPost();
@@ -66,17 +62,19 @@ public class NewPostActivity extends BaseActivity {
         EditText descriptionEditText = (EditText) findViewById(R.id.description);
         EditText imageEditText = (EditText) findViewById(R.id.image);
         String author = AndroidUtil.getUserId(this);
-        String language = AndroidUtil.getUserLocale();
-        Spinner tag = (Spinner) findViewById(R.id.tag);
+        String language = Locale.getDefault().getLanguage();
+        String country = Locale.getDefault().getCountry();
+        String tag = ((Spinner) findViewById(R.id.tag)).getSelectedItem().toString();
 
         Post post = new Post();
         post.setDescription(descriptionEditText.getText().toString());
         post.setImage(imageEditText.getText().toString());
         post.setAuthor(author);
         post.setLanguage(language);
-        post.setTag(tag.getSelectedItem().toString());
+        post.setCountry(country);
+        post.setTag(tag);
 
-        post.save();
+        ApiClientUtil.save(post);
 
         MessageUtil.handle(this, "Saved!");
     }

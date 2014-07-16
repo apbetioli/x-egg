@@ -5,7 +5,7 @@ import com.xegg.app.util.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Post extends Model {
+public class Post implements Model {
 
     private String description;
     private String image;
@@ -18,18 +18,18 @@ public class Post extends Model {
     public Post() {
     }
 
-    public Post(JSONObject json) throws JSONException {
-        description = json.getString("description");
-        image = json.getString("image");
-        author = json.getString("author");
-        language = json.getString("language");
-        country = json.getString("country");
-        tag = json.getString("tag");
-        created = json.getString("created");
+    public Post(JSONObject json) {
+        try { description = json.getString("description"); } catch(JSONException e) {};
+        try { image = json.getString("image"); } catch(JSONException e) {};
+        try { author = json.getString("author"); } catch(JSONException e) {};
+        try { language = json.getString("language"); } catch(JSONException e) {};
+        try { country = json.getString("country"); } catch(JSONException e) {};
+        try { tag = json.getString("tag"); } catch(JSONException e) {};
+        try { created = json.getString("created"); } catch(JSONException e) {};
     }
 
     @Override
-    protected JSONObject toJSONObject() throws JSONException {
+    public JSONObject toJSONObject() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("description", description);
         json.put("image", image);
@@ -41,8 +41,13 @@ public class Post extends Model {
     }
 
     @Override
-    protected String url() {
+    public String url() {
         return Constants.URL_POSTS;
+    }
+
+    @Override
+    public void validate() {
+        //TODO
     }
 
     public String getDescription() {

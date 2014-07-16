@@ -2,13 +2,10 @@ package com.xegg.app;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -17,56 +14,70 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-import com.xegg.app.util.AnimatedGifImageView;
+import com.xegg.app.model.Post;
 import com.xegg.app.util.ApiClientUtil;
-import com.xegg.app.util.Constants;
-import com.xegg.app.util.ImageViewXegg;
 import com.xegg.app.util.MessageUtil;
+import com.xegg.app.util.XEggImageView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.List;
 
 public class ImagePagerActivity extends BaseActivity {
 
     private DisplayImageOptions options;
     private ViewPager pager;
-    private AnimatedGifImageView animatedGifImageView;
+    private int currentPage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_image_pager);
+        setCurrentPage(savedInstanceState);
 
-        getActionBar().setTitle("#" + currentTag());
+        getActionBar().setTitle(currentTag());
 
-        createOptions();
+        createDisplayImageOptions();
 
-        createPager(savedInstanceState);
+        fetchPosts();
+    }
 
-        loadImages();
+    private void setCurrentPage(Bundle savedInstanceState) {
+        currentPage = savedInstanceState != null ? savedInstanceState.getInt(STATE_POSITION) : 0;
+    }
+
+    private void fetchPosts() {
+        ApiClientUtil.GetPostsTask task = new ApiClientUtil.GetPostsTask() {
+
+            @Override
+            protected void onPostExecute(List<Post> posts) {
+                super.onPostExecute(posts);
+
+                if (posts.isEmpty()) {
+                    //TODO I18N
+                    MessageUtil.handle(ImagePagerActivity.this, "Nenhum post nesta categoria");
+                    moveTaskToBack(true);
+                    return;
+                }
+
+                loadPagerSavedState(posts);
+
+            }
+        };
+        task.execute(currentTag());
+
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(PAGE, pager.getCurrentItem());
+        outState.putInt(STATE_POSITION, pager.getCurrentItem());
     }
 
-    private void createPager(Bundle savedInstanceState) {
+    private void loadPagerSavedState(List<Post> posts) {
         pager = (ViewPager) findViewById(R.id.pager);
-
-        if (savedInstanceState != null)
-            pager.setCurrentItem(savedInstanceState.getInt(PAGE, 0));
+        pager.setAdapter(new ImagePagerAdapter(posts));
+        pager.setCurrentItem(currentPage);
     }
 
-    private void createOptions() {
+    private void createDisplayImageOptions() {
         options = new DisplayImageOptions.Builder()
                 .showImageForEmptyUri(R.drawable.ic_empty)
                 .showImageOnFail(R.drawable.ic_error)
@@ -79,34 +90,6 @@ public class ImagePagerActivity extends BaseActivity {
                 .build();
     }
 
-    private void loadImages() {
-
-        ApiClientUtil.GetPostsTask task = new ApiClientUtil.GetPostsTask() {
-            @Override
-            protected void onPostExecute(String postsString) {
-
-                try {
-                    JSONArray postsArray = new JSONArray(postsString);
-
-                    //TODO melhorar
-                    if (postsArray.length() == 0) {
-                        MessageUtil.handle(ImagePagerActivity.this, "Nenhum post nesta categoria");
-                        return;
-                    }
-
-                    pager.setAdapter(new ImagePagerAdapter(postsArray));
-
-                } catch (Exception e) {
-                    //TODO melhorar
-                    e.printStackTrace();
-                    MessageUtil.handle(ImagePagerActivity.this, "Erro ao converter dados: " + e.getMessage());
-                }
-            }
-        };
-
-        task.execute(currentTag());
-    }
-
     private String currentTag() {
         Bundle bundle = getIntent().getExtras();
         return bundle != null ? bundle.getString(TAG) : null;
@@ -114,40 +97,32 @@ public class ImagePagerActivity extends BaseActivity {
 
     private class ImagePagerAdapter extends PagerAdapter {
 
-        private final JSONArray postArray;
-        private final LayoutInflater inflater;
+        private List<Post> posts;
 
-        ImagePagerAdapter(JSONArray postArray) {
-            this.postArray = postArray;
-            inflater = getLayoutInflater();
+        public ImagePagerAdapter(List<Post> posts) {
+            this.posts = posts;
         }
 
-        @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
         }
 
         @Override
         public int getCount() {
-            return postArray.length();
+            return posts.size();
         }
 
         @Override
         public Object instantiateItem(ViewGroup view, int position) {
-            View imageLayout = inflater.inflate(R.layout.item_pager_image, view, false);
+            View imageLayout = getLayoutInflater().inflate(R.layout.item_pager_image, view, false);
             view.addView(imageLayout, 0);
 
-
-            final ImageViewXegg imageView = (ImageViewXegg) imageLayout.findViewById(R.id.image);
-
             final ProgressBar loading = (ProgressBar) imageLayout.findViewById(R.id.loading);
-            loading.setVisibility(View.VISIBLE);
+            final XEggImageView imageView = (XEggImageView) imageLayout.findViewById(R.id.image);
 
-            try {
-                String uri = postArray.getJSONObject(position).getString(Constants.ATR_IMAGE);
-                System.out.println("------------------- " + uri);
-
-                ImageLoader.getInstance().displayImage(uri, imageView, options, new SimpleImageLoadingListener() {
+            if (!posts.isEmpty()) {
+                Post post = posts.get(position);
+                ImageLoader.getInstance().displayImage(post.getImage(), imageView, options, new SimpleImageLoadingListener() {
 
                     @Override
                     public void onLoadingStarted(String imageUri, View view) {
@@ -157,33 +132,25 @@ public class ImagePagerActivity extends BaseActivity {
                     @Override
                     public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                         MessageUtil.handle(ImagePagerActivity.this, failReason);
-
                         loading.setVisibility(View.GONE);
                     }
 
                     @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    public void onLoadingComplete(String imageUri, View view, Bitmap bitmap) {
                         loading.setVisibility(View.GONE);
-                        if (imageUri.contains(".gif")) {
-                            try {
-                                URL gifURL = new URL(imageUri);
-                                HttpURLConnection connection = (HttpURLConnection) gifURL.openConnection();
-                                imageView.setAnimatedGif(connection.getInputStream(), ImageViewXegg.TYPE.FIT_CENTER);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            } catch (MalformedURLException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+//                        try {
+//                            File file = ImageLoader.getInstance().getDiskCache().get(imageUri);
+//                            ((XEggImageView) view).setAnimatedGif(new FileInputStream(file), XEggImageView.TYPE.FIT_CENTER);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+                    }
+
+                    @Override
+                    public void onLoadingCancelled(String imageUri, View view) {
+                        loading.setVisibility(View.GONE);
                     }
                 });
-
-            } catch (JSONException e) {
-                //TODO tratar
-                e.printStackTrace();
-                MessageUtil.handle(ImagePagerActivity.this, "Erro ao converter dados: " + e.getMessage());
             }
 
             return imageLayout;
@@ -193,15 +160,6 @@ public class ImagePagerActivity extends BaseActivity {
         public boolean isViewFromObject(View view, Object object) {
             return view.equals(object);
         }
-/*
-        @Override
-        public void restoreState(Parcelable state, ClassLoader loader) {
-        }
 
-        @Override
-        public Parcelable saveState() {
-            return null;
-        }
-        */
     }
 }

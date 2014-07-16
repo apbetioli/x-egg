@@ -29,21 +29,21 @@ public abstract class BaseActivity extends ActionBarActivity implements Constant
                 return true;
 
             case R.id.new_post:
-                openNewPostActivity();
+                openNewPost();
                 return true;
             case R.id.action_settings:
-                openSettingsActivity();
+                openSettings();
                 return true;
             default:
                 return false;
         }
     }
 
-    private void openSettingsActivity() {
+    private void openSettings() {
         startActivity(new Intent(this, SettingsActivity.class));
     }
 
-    private void openNewPostActivity() {
+    private void openNewPost() {
         startActivity(new Intent(this, NewPostActivity.class));
     }
 }

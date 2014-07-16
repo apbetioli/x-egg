@@ -2,14 +2,11 @@ package com.xegg.app.util;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.xegg.app.R.drawable.blue;
 import static com.xegg.app.R.drawable.green;
 import static com.xegg.app.R.drawable.red;
-import static com.xegg.app.R.drawable.green;
-import static com.xegg.app.R.drawable.blue;
 
-/**
- * Created by Thiago on 07/07/2014.
- */
 public  class ColorsUtil {
 
     public static Map<String, Integer> colors ;

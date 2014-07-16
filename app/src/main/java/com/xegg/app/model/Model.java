@@ -5,19 +5,11 @@ import com.xegg.app.util.ApiClientUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public abstract class Model {
+public interface Model {
 
-    protected abstract JSONObject toJSONObject() throws JSONException;
+    JSONObject toJSONObject() throws JSONException;
 
-    protected abstract String url();
+    String url();
 
-    public void save() {
-        try {
-            ApiClientUtil.SaveTask task = new ApiClientUtil.SaveTask(url());
-            task.execute(toJSONObject());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    void validate();
 }

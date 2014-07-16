@@ -5,7 +5,7 @@ import com.xegg.app.util.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Tag extends Model {
+public class Tag implements Model {
 
     private String name;
     private String image;
@@ -25,7 +25,7 @@ public class Tag extends Model {
     }
 
     @Override
-    protected JSONObject toJSONObject() throws JSONException {
+    public JSONObject toJSONObject() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("name", name);
         json.put("image", image);
@@ -35,8 +35,13 @@ public class Tag extends Model {
     }
 
     @Override
-    protected String url() {
+    public String url() {
         return Constants.URL_TAGS;
+    }
+
+    @Override
+    public void validate() {
+        //TODO
     }
 
     public String getCountry() {

@@ -5,7 +5,7 @@ public interface Constants {
     boolean DEVELOPER_MODE = false;
 
     String TAG = "TAG";
-    String PAGE = "PAGE";
+    String STATE_POSITION = "STATE_POSITION";
 
     String ATR_IMAGE = "image";
 
