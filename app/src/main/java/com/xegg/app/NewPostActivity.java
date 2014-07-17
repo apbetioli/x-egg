@@ -7,11 +7,14 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.koushikdutta.async.future.FutureCallback;
+import com.xegg.app.core.XEgg;
 import com.xegg.app.model.Post;
+import com.xegg.app.model.Tag;
 import com.xegg.app.util.AndroidUtil;
-import com.xegg.app.util.ApiClientUtil;
 import com.xegg.app.util.MessageUtil;
 
+import java.util.List;
 import java.util.Locale;
 
 public class NewPostActivity extends BaseActivity {
@@ -26,7 +29,7 @@ public class NewPostActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save:
-                saveAndRedirect();
+                saveNewPost();
                 return true;
             default:
                 return false;
@@ -38,26 +41,44 @@ public class NewPostActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
 
-        populateTags();
+        loadTags();
     }
 
-    private void populateTags() {
-        String[] tags = ApiClientUtil.listTagsAsArray();
+    private void loadTags() {
+        XEgg.with(this).listTags(new FutureCallback<List<Tag>>() {
+            @Override
+            public void onCompleted(Exception e, List<Tag> tags) {
+                populateTags(tags);
+            }
+        });
+    }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, tags);
+    private void populateTags(List<Tag> tags) {
+        String[] tagArray = tags.toArray(new String[tags.size()]);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, tagArray);
 
         Spinner tagCombo = (Spinner) findViewById(R.id.tag);
         tagCombo.setAdapter(adapter);
     }
 
-
-    private void saveAndRedirect() {
-        saveNewPost();
-        redirectToNewPost();
-    }
-
     private void saveNewPost() {
 
+        Post post = incarnatePost();
+
+        XEgg.with(this).savePost(post, new FutureCallback<Post>() {
+            @Override
+            public void onCompleted(Exception e, Post newPost) {
+                if (e != null)
+                    MessageUtil.handle(NewPostActivity.this, "Error saving post " + e);
+                else
+                    MessageUtil.handle(NewPostActivity.this, "Saved with id " + newPost.getCreated());
+
+            }
+        });
+    }
+
+    private Post incarnatePost() {
         EditText descriptionEditText = (EditText) findViewById(R.id.description);
         EditText imageEditText = (EditText) findViewById(R.id.image);
         String author = AndroidUtil.getUserId(this);
@@ -72,16 +93,7 @@ public class NewPostActivity extends BaseActivity {
         post.setLanguage(language);
         post.setCountry(country);
         post.setTag(tag);
-
-        ApiClientUtil.save(post);
-
-        MessageUtil.handle(this, "Saved!");
-    }
-
-
-
-    private void redirectToNewPost() {
-        //TODO
+        return post;
     }
 
 }

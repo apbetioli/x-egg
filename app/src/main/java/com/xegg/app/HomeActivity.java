@@ -10,8 +10,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.xegg.app.util.ApiClientUtil;
+import com.koushikdutta.async.future.FutureCallback;
+import com.xegg.app.core.XEgg;
+import com.xegg.app.model.Tag;
 import com.xegg.app.util.ColorsUtil;
+
+import java.util.List;
 
 public class HomeActivity extends BaseActivity {
 
@@ -20,15 +24,23 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        addTagButtonsToMainLayout();
+        loadTags();
     }
 
-    private void addTagButtonsToMainLayout() {
+    private void loadTags() {
+        XEgg.with(this).listTags(new FutureCallback<List<Tag>>() {
+            @Override
+            public void onCompleted(Exception e, List<Tag> tags) {
+                addTagButtonsToMainLayout(tags);
+            }
+        });
+    }
 
+    private void addTagButtonsToMainLayout(List<Tag> tags) {
         final LinearLayout main = (LinearLayout) findViewById(R.id.main);
 
-        for (final String tag : ApiClientUtil.listTags()) {
-            LinearLayout tagButton = createTagButton(tag);
+        for (Tag tag : tags) {
+            LinearLayout tagButton = createTagButton(tag.getName());
             main.addView(tagButton);
         }
     }

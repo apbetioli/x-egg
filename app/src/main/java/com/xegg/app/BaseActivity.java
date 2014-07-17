@@ -18,11 +18,10 @@ public abstract class BaseActivity extends ActionBarActivity implements Constant
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
             case R.id.new_post:
                 openNewPost();
                 return true;
-            case R.id.action_settings:
+            case R.id.settings:
                 openSettings();
                 return true;
             default:

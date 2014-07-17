@@ -1,40 +1,11 @@
 package com.xegg.app.model;
 
-import com.xegg.app.util.Constants;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public class Tag implements Model {
+public class Tag extends Model {
 
     private String name;
     private String image;
     private String language;
     private String country;
-    private String created;
-
-    public Tag() {
-    }
-
-    @Override
-    public JSONObject toJSONObject() throws JSONException {
-        JSONObject json = new JSONObject();
-        json.put("name", name);
-        json.put("image", image);
-        json.put("language", language);
-        json.put("country", country);
-        return json;
-    }
-
-    @Override
-    public String url() {
-        return Constants.URL_TAGS;
-    }
-
-    @Override
-    public void validate() {
-        //TODO
-    }
 
     public String getCountry() {
         return country;
@@ -68,7 +39,4 @@ public class Tag implements Model {
         this.language = language;
     }
 
-    public String getCreated() {
-        return created;
-    }
 }

@@ -5,13 +5,31 @@
     android:background="@android:color/black"
     android:padding="1dip">
 
-    <ImageView
-        android:id="@+id/image"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scroll_image"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true" />
+
+    </ScrollView>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="center"
-        android:adjustViewBounds="true" />
+        android:text="Loading... Please wait."
+        android:id="@+id/description"
+        android:layout_gravity="center_horizontal|bottom"
+        android:gravity="center_horizontal"
+        android:background="@android:color/black"
+        android:alpha="0.8"
+        android:textStyle="bold" />
 
 </FrameLayout>

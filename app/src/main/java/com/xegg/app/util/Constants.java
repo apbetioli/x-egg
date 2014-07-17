@@ -7,8 +7,6 @@ public interface Constants {
     String TAG = "TAG";
     String STATE_POSITION = "STATE_POSITION";
 
-    String ATR_IMAGE = "image";
-
     String URL_API = "http://www.x-egg.com/api/v1";
     String URL_POSTS = URL_API + "/posts";
     String URL_TAGS = URL_API + "/tags";

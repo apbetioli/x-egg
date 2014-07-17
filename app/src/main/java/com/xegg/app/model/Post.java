@@ -1,11 +1,6 @@
 package com.xegg.app.model;
 
-import com.xegg.app.util.Constants;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public class Post implements Model {
+public class Post extends Model {
 
     private String description;
     private String image;
@@ -13,32 +8,6 @@ public class Post implements Model {
     private String language;
     private String country;
     private String tag;
-    private String created;
-
-    public Post() {
-    }
-
-    @Override
-    public JSONObject toJSONObject() throws JSONException {
-        JSONObject json = new JSONObject();
-        json.put("description", description);
-        json.put("image", image);
-        json.put("author", author);
-        json.put("language", language);
-        json.put("country", country);
-        json.put("tag", tag);
-        return json;
-    }
-
-    @Override
-    public String url() {
-        return Constants.URL_POSTS;
-    }
-
-    @Override
-    public void validate() {
-        //TODO
-    }
 
     public String getDescription() {
         return description;
@@ -78,10 +47,6 @@ public class Post implements Model {
 
     public void setTag(String tag) {
         this.tag = tag;
-    }
-
-    public String getCreated() {
-        return created;
     }
 
     public String getCountry() {

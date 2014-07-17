@@ -6,12 +6,11 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
+import com.xegg.app.core.XEgg;
 import com.xegg.app.model.Post;
-import com.xegg.app.util.Constants;
 import com.xegg.app.util.MessageUtil;
 
 import java.util.List;
@@ -31,37 +30,33 @@ public class ImagePagerActivity extends BaseActivity {
 
         getActionBar().setTitle(currentTag());
 
-        fetchPosts();
+        loadPosts();
     }
 
     private void setCurrentPage(Bundle savedInstanceState) {
         currentPage = savedInstanceState != null ? savedInstanceState.getInt(STATE_POSITION) : 0;
     }
 
-    private void fetchPosts() {
+    private void loadPosts() {
 
-        String tag = currentTag();
-        String url = Constants.URL_POSTS + (tag != null ? "?tag=" + tag : "");
+        XEgg.with(this).loadPosts(currentTag(), new FutureCallback<List<Post>>() {
+            @Override
+            public void onCompleted(Exception e, List<Post> posts) {
+                populatePosts(posts);
+            }
+        });
 
-        Ion.with(this)
-                .load(url)
-                .as(new TypeToken<List<Post>>(){})
-                .setCallback(new FutureCallback<List<Post>>() {
-                    @Override
-                    public void onCompleted(Exception e, List<Post> posts) {
+    }
 
-                        if (posts.isEmpty()) {
-                            //TODO I18N
-                            MessageUtil.handle(ImagePagerActivity.this, "Nenhum post nesta categoria");
-                            moveTaskToBack(true);
-                            return;
-                        }
+    private void populatePosts(List<Post> posts) {
+        if (posts.isEmpty()) {
+            //TODO I18N
+            MessageUtil.handle(this, "Nenhum post nesta categoria");
+            onBackPressed();
+            return;
+        }
 
-                        loadPagerSavedState(posts);
-
-                    }
-                });
-
+        loadPagerSavedState(posts);
     }
 
     @Override
@@ -103,16 +98,12 @@ public class ImagePagerActivity extends BaseActivity {
             view.addView(imageLayout, 0);
 
             ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
+            TextView description = (TextView) imageLayout.findViewById(R.id.description);
 
             if (!posts.isEmpty()) {
                 Post post = posts.get(position);
-
-                Ion.with(imageView)
-//                        .placeholder(R.drawable.placeholder_image)
-                        .error(R.drawable.ic_error)
-//                        .animateLoad(spinAnimation)
-//                        .animateIn(fadeInAnimation)
-                        .load(post.getImage());
+                description.setText(post.getDescription());
+                XEgg.with(imageView).loadImageFromPost(post);
             }
 
             return imageLayout;

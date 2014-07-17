@@ -1,15 +1,24 @@
 package com.xegg.app.model;
 
-import com.xegg.app.util.ApiClientUtil;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public interface Model {
+import java.io.Serializable;
 
-    JSONObject toJSONObject() throws JSONException;
+public class Model implements Serializable {
 
-    String url();
+    private String _id;
+    private String created;
 
-    void validate();
+    public void validate() {
+        //TODO
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public String getCreated() {
+        return created;
+    }
 }
