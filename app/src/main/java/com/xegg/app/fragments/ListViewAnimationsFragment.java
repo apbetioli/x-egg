@@ -6,14 +6,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.nhaarman.listviewanimations.swinginadapters.AnimationAdapter;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.AlphaInAnimationAdapter;
-import com.nhaarman.listviewanimations.swinginadapters.prepared.ScaleInAnimationAdapter;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingLeftInAnimationAdapter;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingRightInAnimationAdapter;
 import com.xegg.app.R;
 import com.xegg.app.core.XEgg;
@@ -28,17 +25,12 @@ import it.gmariotti.cardslib.library.internal.CardArrayAdapter;
 import it.gmariotti.cardslib.library.view.CardListView;
 
 
-public class ListViewAnimationsFragment extends BaseFragment implements
-        ActionBar.OnNavigationListener {
-
-    private CardListView mListView;
-    private CardArrayAdapter mCardArrayAdapter;
+public class ListViewAnimationsFragment extends BaseFragment {
 
     @Override
     public int getTitleResourceId() {
         return R.string.app_name;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,12 +41,7 @@ public class ListViewAnimationsFragment extends BaseFragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        initCard();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
+        loadTags();
     }
 
     @Override
@@ -64,143 +51,49 @@ public class ListViewAnimationsFragment extends BaseFragment implements
 
     }
 
+    private void loadTags() {
 
-
-    private void initCard() {
-
-        final ArrayList<Card> cards = new ArrayList<Card>();
         XEgg.with(this.getActivity()).listTags(new FutureCallback<List<Tag>>() {
             @Override
             public void onCompleted(Exception e, List<Tag> tags) {
-                int i = 0;
-                for (Tag tag : tags) {
-                    ColorCard card = new ColorCard(getActivity());
-                    card.setBackgroundResourceId(R.drawable.demoextra_card_selector_color2);
-                    card.setTitle(tag.getName());
-                    card.setTag(tag.getName());
-                    cards.add(card);
-
-                    switch (i++) {
-                        case 0:
-                            card.setBackgroundResourceId(R.drawable.demoextra_card_selector_color1);
-                            break;
-                        case 1:
-                            card.setBackgroundResourceId(R.drawable.demoextra_card_selector_color2);
-                            break;
-                        case 2:
-                            card.setBackgroundResourceId(R.drawable.demoextra_card_selector_color3);
-                            break;
-                        case 3:
-                            card.setBackgroundResourceId(R.drawable.demoextra_card_selector_color4);
-                            break;
-                        case 4:
-                            card.setBackgroundResourceId(R.drawable.demoextra_card_selector_color5);
-                            i = 0;
-                            break;
-                    }
-                }
-
-                //Set the adapter
-                mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
-
-                mListView = (CardListView) getActivity().findViewById(R.id.carddemo_extra_list_viewanimations);
-                if (mListView != null) {
-                    setBottomRightAdapter();
-                }
+                final List<Card> cards = createCardsFromTags(tags);
+                createView(cards);
             }
         });
 
     }
 
+    private void createView(List<Card> cards) {
+        CardListView cardListView = (CardListView) getActivity().findViewById(R.id.card_list);
 
+        CardArrayAdapter cardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
 
-    private void setAlphaAdapter() {
-        AnimationAdapter animCardArrayAdapter = new AlphaInAnimationAdapter(mCardArrayAdapter);
-        animCardArrayAdapter.setAbsListView(mListView);
-        if (mListView != null) {
-            mListView.setExternalAdapter(animCardArrayAdapter, mCardArrayAdapter);
-        }
+        AnimationSelector animationSelector = new AnimationSelector(cardArrayAdapter);
+
+        AnimationAdapter animationAdapter = animationSelector.nextRandomAnimation();
+
+        animationAdapter.setAbsListView(cardListView);
+
+        cardListView.setExternalAdapter(animationAdapter, cardArrayAdapter);
     }
 
-    /**
-     * Left animation
-     */
-    private void setLeftAdapter() {
-        AnimationAdapter animCardArrayAdapter = new SwingLeftInAnimationAdapter(mCardArrayAdapter);
-        animCardArrayAdapter.setAbsListView(mListView);
-        if (mListView != null) {
-            mListView.setExternalAdapter(animCardArrayAdapter, mCardArrayAdapter);
-        }
-    }
 
-    /**
-     * Right animation
-     */
-    private void setRightAdapter() {
-        AnimationAdapter animCardArrayAdapter = new SwingRightInAnimationAdapter(mCardArrayAdapter);
-        animCardArrayAdapter.setAbsListView(mListView);
-        if (mListView != null) {
-            mListView.setExternalAdapter(animCardArrayAdapter, mCardArrayAdapter);
-        }
-    }
+    private List<Card> createCardsFromTags(List<Tag> tags) {
+        final List<Card> cards = new ArrayList<Card>();
 
-    /**
-     * Bottom animation
-     */
-    private void setBottomAdapter() {
-        AnimationAdapter animCardArrayAdapter = new SwingBottomInAnimationAdapter(mCardArrayAdapter);
-        animCardArrayAdapter.setAbsListView(mListView);
-        mListView.setExternalAdapter(animCardArrayAdapter, mCardArrayAdapter);
-    }
+        ColorSelector colorSelector = new ColorSelector();
 
-    /**
-     * Bottom-right animation
-     */
-    private void setBottomRightAdapter() {
-        AnimationAdapter animCardArrayAdapter = new SwingBottomInAnimationAdapter(new SwingRightInAnimationAdapter(mCardArrayAdapter));
-        animCardArrayAdapter.setAbsListView(mListView);
-        if (mListView != null) {
-            mListView.setExternalAdapter(animCardArrayAdapter, mCardArrayAdapter);
-        }
-    }
+        for (Tag tag : tags) {
+            ColorCard card = new ColorCard(getActivity());
+            card.setBackgroundResourceId(R.drawable.demoextra_card_selector_color2);
+            card.setTitle(tag.getName());
+            card.setTag(tag.getName());
+            card.setBackgroundResourceId(colorSelector.nextColor());
 
-    /**
-     * Scale animation
-     */
-    private void setScaleAdapter() {
-        AnimationAdapter animCardArrayAdapter = new ScaleInAnimationAdapter(mCardArrayAdapter);
-        animCardArrayAdapter.setAbsListView(mListView);
-        if (mListView != null) {
-            mListView.setExternalAdapter(animCardArrayAdapter, mCardArrayAdapter);
-        }
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-        switch (itemPosition) {
-            case 0:
-                setAlphaAdapter();
-                return true;
-            case 1:
-                setLeftAdapter();
-                return true;
-            case 2:
-                setRightAdapter();
-                return true;
-            case 3:
-                setBottomAdapter();
-                return true;
-            case 4:
-                setBottomRightAdapter();
-                return true;
-            case 5:
-                setScaleAdapter();
-                return true;
-            default:
-                return false;
+            cards.add(card);
         }
 
+        return cards;
     }
-
 
 }

@@ -3,6 +3,6 @@
     android:id="@+id/fragment_main_extras"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="example.listanimationexample.MyActivity"
+    tools:context="com.xegg.app.HomeActivity"
     tools:ignore="MergeRootFrame" />
 
