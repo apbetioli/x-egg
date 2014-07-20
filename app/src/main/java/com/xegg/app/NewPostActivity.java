@@ -54,7 +54,7 @@ public class NewPostActivity extends BaseActivity {
     }
 
     private void populateTags(List<Tag> tags) {
-        String[] tagArray = tags.toArray(new String[tags.size()]);
+        String[] tagArray = tags.toArray(new String[tags.size()+1]);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, tagArray);
 
