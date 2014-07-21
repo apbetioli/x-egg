@@ -2,16 +2,16 @@ package com.xegg.app.fragments;
 
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.koushikdutta.async.future.FutureCallback;
 import com.nhaarman.listviewanimations.swinginadapters.AnimationAdapter;
-import com.nhaarman.listviewanimations.swinginadapters.prepared.AlphaInAnimationAdapter;
-import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingRightInAnimationAdapter;
 import com.xegg.app.R;
 import com.xegg.app.core.XEgg;
 import com.xegg.app.model.Tag;
@@ -27,6 +27,8 @@ import it.gmariotti.cardslib.library.view.CardListView;
 
 public class ListViewAnimationsFragment extends BaseFragment {
 
+    private AdView adView;
+
     @Override
     public int getTitleResourceId() {
         return R.string.app_name;
@@ -41,23 +43,25 @@ public class ListViewAnimationsFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        loadTags();
+        if(savedInstanceState == null)
+            loadTags();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+//    }
 
-    }
-
-    private void loadTags() {
+    public void loadTags() {
 
         XEgg.with(this.getActivity()).listTags(new FutureCallback<List<Tag>>() {
             @Override
             public void onCompleted(Exception e, List<Tag> tags) {
                 final List<Card> cards = createCardsFromTags(tags);
                 createView(cards);
+
+                loadAd();
             }
         });
 
@@ -96,4 +100,39 @@ public class ListViewAnimationsFragment extends BaseFragment {
         return cards;
     }
 
+    private void loadAd() {
+        adView = (AdView) getActivity().findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addKeyword("gif")
+                .addKeyword("fun")
+                .addKeyword("meme")
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("samsung-gt_i9300-4df19510557b5fcf")
+                .build();
+        adView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (adView != null) {
+            adView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
+    }
 }

@@ -3,6 +3,7 @@ package com.xegg.app;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,12 @@ public class ImagePagerActivity extends BaseActivity {
 
     //TODO lidar com multiplas tags
     private int currentPage;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.image_pager, menu);
+        return true;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,5 +135,7 @@ public class ImagePagerActivity extends BaseActivity {
             return view.equals(object);
         }
 
+
     }
+
 }

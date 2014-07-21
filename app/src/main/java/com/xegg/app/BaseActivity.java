@@ -21,6 +21,9 @@ public abstract class BaseActivity extends ActionBarActivity implements Constant
             case R.id.new_post:
                 openNewPost();
                 return true;
+            case R.id.refresh:
+                refresh();
+                return true;
             case R.id.settings:
                 openSettings();
                 return true;
@@ -28,6 +31,8 @@ public abstract class BaseActivity extends ActionBarActivity implements Constant
                 return false;
         }
     }
+
+    protected void refresh() {}
 
     private void openSettings() {
         startActivity(new Intent(this, SettingsActivity.class));

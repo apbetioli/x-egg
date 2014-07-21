@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@android:color/black"
@@ -7,17 +7,18 @@
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scroll_image"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:layout_above="@+id/description"
+        android:layout_alignParentTop="true">
 
         <ImageView
             android:id="@+id/image"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true" />
+            android:adjustViewBounds="true"
+            android:layout_gravity="top" />
 
     </ScrollView>
 
@@ -26,10 +27,11 @@
         android:layout_height="wrap_content"
         android:text="Loading... Please wait."
         android:id="@+id/description"
-        android:layout_gravity="center_horizontal|bottom"
         android:gravity="center_horizontal"
         android:background="@android:color/black"
-        android:alpha="0.8"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignParentBottom="true" />
 
-</FrameLayout>
+
+</RelativeLayout>
