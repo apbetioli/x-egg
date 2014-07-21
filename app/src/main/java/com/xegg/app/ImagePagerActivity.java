@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.koushikdutta.async.future.FutureCallback;
 import com.xegg.app.core.XEgg;
 import com.xegg.app.model.Post;
@@ -19,7 +21,9 @@ import java.util.List;
 
 public class ImagePagerActivity extends BaseActivity {
 
+    public static final String ID_ADS = "ca-app-pub-8685504932148148/7934956047";
     private ViewPager pager;
+    private InterstitialAd interstitial;
 
     //TODO lidar com multiplas tags
     private int currentPage;
@@ -39,6 +43,23 @@ public class ImagePagerActivity extends BaseActivity {
         getActionBar().setTitle(currentTag());
 
         loadPosts();
+
+        createInterstitialAd();
+
+
+    }
+
+    private void createInterstitialAd() {
+        interstitial = new InterstitialAd(this);
+        interstitial.setAdUnitId(ID_ADS);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        interstitial.loadAd(adRequest);
+    }
+
+    public void displayInterstitial() {
+        if (interstitial.isLoaded()) {
+            interstitial.show();
+        }
     }
 
     @Override
@@ -126,6 +147,8 @@ public class ImagePagerActivity extends BaseActivity {
                 XEgg.with(imageView).loadImageFromPost(post);
             }
 
+            if (position % 4 == 0)
+                displayInterstitial();
             return imageLayout;
         }
 
