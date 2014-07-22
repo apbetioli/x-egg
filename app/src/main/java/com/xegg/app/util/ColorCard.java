@@ -37,11 +37,9 @@ public class ColorCard extends Card {
 
     private void init() {
 
-        //Add ClickListener
         setOnClickListener(new OnCardClickListener() {
             @Override
             public void onClick(Card card, View view) {
-                // Toast.makeText(getContext(), "Click Listener card=" + count, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(view.getContext(), ImagePagerActivity.class);
                 intent.putExtra(Constants.TAG, tag);
                 view.getContext().startActivity(intent);
@@ -56,8 +54,8 @@ public class ColorCard extends Card {
         if (title != null) {
             title.setText(mTitle);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(0, 6, 0, 0);
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            params.setMargins(0, 40, 0, 0);
             title.setLayoutParams(params);
             title.setTextSize(40);
             title.setTypeface(null, Typeface.BOLD);

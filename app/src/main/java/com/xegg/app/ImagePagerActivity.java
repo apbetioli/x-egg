@@ -164,7 +164,7 @@ public class ImagePagerActivity extends BaseActivity {
 
             if (position != 0 && position % NUMBER_MODULE_FOR_SHOW_ADS == 0)
                 showAdsInterstitial();
-            
+
             return imageLayout;
         }
 
