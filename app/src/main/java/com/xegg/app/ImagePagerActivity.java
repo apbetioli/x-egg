@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.koushikdutta.async.future.FutureCallback;
@@ -22,6 +23,7 @@ import java.util.List;
 public class ImagePagerActivity extends BaseActivity {
 
     public static final String ID_ADS = "ca-app-pub-8685504932148148/7934956047";
+    public static final int NUMBER_MODULE_FOR_SHOW_ADS = 5;
     private ViewPager pager;
     private InterstitialAd interstitial;
 
@@ -52,15 +54,28 @@ public class ImagePagerActivity extends BaseActivity {
     private void createInterstitialAd() {
         interstitial = new InterstitialAd(this);
         interstitial.setAdUnitId(ID_ADS);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        interstitial.loadAd(adRequest);
+        interstitial.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                loadAd();
+            }
+        });
+        loadAd();
     }
 
-    public void displayInterstitial() {
+    public void showAdsInterstitial() {
         if (interstitial.isLoaded()) {
             interstitial.show();
         }
     }
+
+
+    void loadAd() {
+        System.out.println("Loading aloha!!");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        interstitial.loadAd(adRequest);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -147,8 +162,9 @@ public class ImagePagerActivity extends BaseActivity {
                 XEgg.with(imageView).loadImageFromPost(post);
             }
 
-            if (position % 4 == 0)
-                displayInterstitial();
+            if (position != 0 && position % NUMBER_MODULE_FOR_SHOW_ADS == 0)
+                showAdsInterstitial();
+            
             return imageLayout;
         }
 
