@@ -1,8 +1,6 @@
 package com.xegg.app.fragments;
 
 
-import android.app.ActionBar;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +14,7 @@ import com.xegg.app.R;
 import com.xegg.app.core.XEgg;
 import com.xegg.app.model.Tag;
 import com.xegg.app.util.ColorCard;
+import com.xegg.app.util.MessageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class ListViewAnimationsFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_my, container, false);
+        return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
     @Override
@@ -47,17 +46,16 @@ public class ListViewAnimationsFragment extends BaseFragment {
             loadTags();
     }
 
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-//    }
-
     public void loadTags() {
 
         XEgg.with(this.getActivity()).listTags(new FutureCallback<List<Tag>>() {
             @Override
             public void onCompleted(Exception e, List<Tag> tags) {
+                if (e != null) {
+                    MessageUtil.handle(getActivity(), "Error loading tags " + e);
+                    return;
+                }
+
                 final List<Card> cards = createCardsFromTags(tags);
                 createView(cards);
 

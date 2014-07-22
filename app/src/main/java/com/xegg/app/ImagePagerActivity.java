@@ -22,8 +22,6 @@ import java.util.List;
 
 public class ImagePagerActivity extends BaseActivity {
 
-    public static final String ID_ADS = "ca-app-pub-8685504932148148/7934956047";
-    public static final int NUMBER_MODULE_FOR_SHOW_ADS = 5;
     private ViewPager pager;
     private InterstitialAd interstitial;
 
@@ -47,8 +45,6 @@ public class ImagePagerActivity extends BaseActivity {
         loadPosts();
 
         createInterstitialAd();
-
-
     }
 
     private void createInterstitialAd() {
@@ -63,19 +59,15 @@ public class ImagePagerActivity extends BaseActivity {
         loadAd();
     }
 
-    public void showAdsInterstitial() {
-        if (interstitial.isLoaded()) {
+    public void showAd() {
+        if (interstitial.isLoaded())
             interstitial.show();
-        }
     }
 
-
     void loadAd() {
-        System.out.println("Loading aloha!!");
         AdRequest adRequest = new AdRequest.Builder().build();
         interstitial.loadAd(adRequest);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -98,6 +90,12 @@ public class ImagePagerActivity extends BaseActivity {
         XEgg.with(this).loadPosts(currentTag(), new FutureCallback<List<Post>>() {
             @Override
             public void onCompleted(Exception e, List<Post> posts) {
+                if (e != null) {
+                    MessageUtil.handle(ImagePagerActivity.this, "Error loading posts " + e);
+                    finish();
+                    return;
+                }
+
                 populatePosts(posts);
             }
         });
@@ -106,9 +104,8 @@ public class ImagePagerActivity extends BaseActivity {
 
     private void populatePosts(List<Post> posts) {
         if (posts.isEmpty()) {
-            //TODO I18N
-            MessageUtil.handle(this, "Nenhum post nesta categoria");
-            onBackPressed();
+            MessageUtil.handle(this, "There are no posts");
+            finish();
             return;
         }
 
@@ -153,19 +150,31 @@ public class ImagePagerActivity extends BaseActivity {
             View imageLayout = getLayoutInflater().inflate(R.layout.item_pager_image, view, false);
             view.addView(imageLayout, 0);
 
-            ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
-            TextView description = (TextView) imageLayout.findViewById(R.id.description);
-
             if (!posts.isEmpty()) {
                 Post post = posts.get(position);
-                description.setText(post.getDescription());
-                XEgg.with(imageView).loadImageFromPost(post);
+
+                setDescription(imageLayout, post);
+                setImage(imageLayout, post);
             }
 
-            if (position != 0 && position % NUMBER_MODULE_FOR_SHOW_ADS == 0)
-                showAdsInterstitial();
+            if (shouldShowAd(position))
+                showAd();
 
             return imageLayout;
+        }
+
+        private boolean shouldShowAd(int position) {
+            return position != 0 && position % NUMBER_MODULE_FOR_SHOW_ADS == 0;
+        }
+
+        private void setImage(View context, Post post) {
+            ImageView imageView = (ImageView) context.findViewById(R.id.image);
+            XEgg.with(imageView).loadImageFromPost(post);
+        }
+
+        private void setDescription(View context, Post post) {
+            TextView description = (TextView) context.findViewById(R.id.description);
+            description.setText(post.getDescription());
         }
 
 

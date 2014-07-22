@@ -19,26 +19,26 @@ public abstract class BaseActivity extends ActionBarActivity implements Constant
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.new_post:
-                openNewPost();
+                openNewPostActivity();
                 return true;
             case R.id.refresh:
                 refresh();
                 return true;
             case R.id.settings:
-                openSettings();
+                openSettingsActivity();
                 return true;
             default:
-                return false;
+                return super.onOptionsItemSelected(item);
         }
     }
 
     protected void refresh() {}
 
-    private void openSettings() {
+    protected void openSettingsActivity() {
         startActivity(new Intent(this, SettingsActivity.class));
     }
 
-    private void openNewPost() {
+    protected void openNewPostActivity() {
         startActivity(new Intent(this, NewPostActivity.class));
     }
 }

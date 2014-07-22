@@ -11,4 +11,6 @@ public interface Constants {
     String URL_POSTS = URL_API + "/posts";
     String URL_TAGS = URL_API + "/tags";
 
+    String ID_ADS = "ca-app-pub-8685504932148148/7934956047";
+    int NUMBER_MODULE_FOR_SHOW_ADS = 5;
 }

@@ -48,13 +48,18 @@ public class NewPostActivity extends BaseActivity {
         XEgg.with(this).listTags(new FutureCallback<List<Tag>>() {
             @Override
             public void onCompleted(Exception e, List<Tag> tags) {
+                if (e != null) {
+                    MessageUtil.handle(NewPostActivity.this, "Error loading tags " + e);
+                    return;
+                }
+
                 populateTags(tags);
             }
         });
     }
 
     private void populateTags(List<Tag> tags) {
-        String[] tagArray = tags.toArray(new String[tags.size()+1]);
+        String[] tagArray = XEgg.toStringArray(tags);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, tagArray);
 
@@ -69,11 +74,12 @@ public class NewPostActivity extends BaseActivity {
         XEgg.with(this).savePost(post, new FutureCallback<Post>() {
             @Override
             public void onCompleted(Exception e, Post newPost) {
-                if (e != null)
+                if (e != null) {
                     MessageUtil.handle(NewPostActivity.this, "Error saving post " + e);
-                else
-                    MessageUtil.handle(NewPostActivity.this, "Saved with id " + newPost.getCreated());
+                    return;
+                }
 
+                MessageUtil.handle(NewPostActivity.this, "Saved with id " + newPost.getCreated());
             }
         });
     }

@@ -8,18 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.xegg.app.ImagePagerActivity;
 import com.xegg.app.R;
 
 import it.gmariotti.cardslib.library.internal.Card;
 
-/**
- * Simple colored card
- *
- * @author Gabriele Mariotti (gabri.mariotti@gmail.com)
- */
 public class ColorCard extends Card {
 
     protected String mTitle;
@@ -49,7 +43,7 @@ public class ColorCard extends Card {
 
     @Override
     public void setupInnerViewElements(ViewGroup parent, View view) {
-        TextView title = (TextView) parent.findViewById(R.id.carddemo_extras_card_color_inner_simple_title);
+        TextView title = (TextView) parent.findViewById(R.id.tag_title);
 
         if (title != null) {
             title.setText(mTitle);
