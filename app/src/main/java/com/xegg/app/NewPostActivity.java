@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.xegg.app.core.XEgg;
@@ -41,7 +42,26 @@ public class NewPostActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
 
+        loadExtrasFromIntent();
+
         loadTags();
+    }
+
+    private void loadExtrasFromIntent() {
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+            String description = bundle.getString("android.intent.extra.SUBJECT");
+            if (description != null) {
+                EditText descriptionEdit = (EditText) findViewById(R.id.description);
+                descriptionEdit.setText(description);
+            }
+
+            String url = bundle.getString("android.intent.extra.TEXT");
+            if (url != null) {
+                EditText imageEdit = (EditText) findViewById(R.id.image);
+                imageEdit.setText(url);
+            }
+        }
     }
 
     private void loadTags() {
@@ -75,11 +95,11 @@ public class NewPostActivity extends BaseActivity {
             @Override
             public void onCompleted(Exception e, Post newPost) {
                 if (e != null) {
-                    MessageUtil.handle(NewPostActivity.this, "Error saving post " + e);
+                    MessageUtil.handle(NewPostActivity.this, "Oops! " + e.getLocalizedMessage());
                     return;
                 }
 
-                MessageUtil.handle(NewPostActivity.this, "Saved with id " + newPost.getCreated());
+                NewPostActivity.this.finish();
             }
         });
     }
@@ -90,7 +110,7 @@ public class NewPostActivity extends BaseActivity {
         String author = AndroidUtil.getUserId(this);
         String language = Locale.getDefault().getLanguage();
         String country = Locale.getDefault().getCountry();
-        String tag = ((Spinner) findViewById(R.id.tag)).getSelectedItem().toString();
+        Object tag = ((Spinner) findViewById(R.id.tag)).getSelectedItem();
 
         Post post = new Post();
         post.setDescription(descriptionEditText.getText().toString());
@@ -98,7 +118,7 @@ public class NewPostActivity extends BaseActivity {
         post.setAuthor(author);
         post.setLanguage(language);
         post.setCountry(country);
-        post.setTag(tag);
+        post.setTag(tag != null ? tag.toString() : null);
         return post;
     }
 

@@ -9,6 +9,16 @@ public class Post extends Model {
     private String country;
     private String tag;
 
+    @Override
+    public void validate() {
+        if(description == null || description.trim().isEmpty())
+            throw new IllegalArgumentException("Please inform the description");
+        if(image == null || image.trim().isEmpty())
+            throw new IllegalArgumentException("Please inform the image URL");
+        if(tag == null || tag.trim().isEmpty())
+            throw new IllegalArgumentException("Please inform the tag");
+    }
+
     public String getDescription() {
         return description;
     }

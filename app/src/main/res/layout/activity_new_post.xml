@@ -9,20 +9,6 @@
     tools:context="com.xegg.app.NewPostActivity">
 
     <TextView
-        android:text="@string/description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/descriptionTextView" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/description"
-        android:layout_below="@+id/descriptionTextView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/image_url"
@@ -36,6 +22,20 @@
         android:layout_height="wrap_content"
         android:id="@+id/image"
         android:layout_below="@+id/imageTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="@string/description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/descriptionTextView" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/description"
+        android:layout_below="@+id/descriptionTextView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

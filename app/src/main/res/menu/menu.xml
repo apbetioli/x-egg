@@ -6,7 +6,7 @@
     <item
         android:id="@+id/new_post"
         android:icon="@drawable/ic_action_new"
-        android:title="@string/menu_item_new_post"
+        android:title="@string/new_post"
         app:showAsAction="ifRoom" />
 
     <item
@@ -14,11 +14,5 @@
         android:icon="@drawable/ic_action_refresh_dark"
         android:title="@string/refresh"
         app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/settings"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-
 
 </menu>

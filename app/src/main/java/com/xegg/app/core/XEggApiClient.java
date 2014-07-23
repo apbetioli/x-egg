@@ -9,6 +9,10 @@ import com.xegg.app.model.Post;
 import com.xegg.app.model.Tag;
 import com.xegg.app.util.Constants;
 
+import org.apache.http.client.utils.URLEncodedUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 public class XEggApiClient {
@@ -20,7 +24,12 @@ public class XEggApiClient {
     }
 
     public void savePost(Post post, FutureCallback<Post> future) {
-        post.validate();
+        try {
+            post.validate();
+        } catch (Exception e) {
+            future.onCompleted(e, null);
+            return;
+        }
 
         Ion.with(context)
                 .load(Constants.URL_POSTS)
@@ -42,7 +51,14 @@ public class XEggApiClient {
 
     public void loadPosts(String tag, FutureCallback<List<Post>> future) {
 
-        String tagParam = tag != null ? "?tag=" + tag : "";
+        String tagParam = null;
+        try {
+            tagParam = tag != null ? "?tag=" + URLEncoder.encode(tag, "UTF-8") : "";
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            tagParam = tag;
+        }
+
         String url = Constants.URL_POSTS + tagParam;
 
         Ion.with(context)

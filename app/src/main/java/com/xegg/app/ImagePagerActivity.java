@@ -1,5 +1,6 @@
 package com.xegg.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -14,6 +15,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.koushikdutta.async.future.FutureCallback;
+import com.xegg.app.core.ShareIntentBuilder;
 import com.xegg.app.core.XEgg;
 import com.xegg.app.model.Post;
 import com.xegg.app.util.MessageUtil;
@@ -27,6 +29,7 @@ public class ImagePagerActivity extends BaseActivity {
 
     //TODO lidar com multiplas tags
     private int currentPage;
+    private List<Post> posts;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,13 +75,28 @@ public class ImagePagerActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home: {
+            case R.id.home: {
                 finish();
+                return true;
+            }
+            case R.id.share: {
+                sharePost();
                 return true;
             }
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void sharePost() {
+        Post post = posts.get(currentPage);
+
+        ShareIntentBuilder sharer = new ShareIntentBuilder();
+        sharer.withSubject(post.getDescription());
+        sharer.withText(post.getImage());
+        Intent intent = sharer.build();
+
+        startActivity(intent);
     }
 
     private void setCurrentPage(Bundle savedInstanceState) {
@@ -118,6 +136,8 @@ public class ImagePagerActivity extends BaseActivity {
     }
 
     private void loadPagerSavedState(List<Post> posts) {
+        this.posts = posts;
+
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(new ImagePagerAdapter(posts));
         pager.setCurrentItem(currentPage);

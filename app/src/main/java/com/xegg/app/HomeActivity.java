@@ -4,12 +4,13 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.xegg.app.fragments.BaseFragment;
 import com.xegg.app.fragments.ListViewAnimationsFragment;
+import com.xegg.app.util.MessageUtil;
 
 public class HomeActivity extends BaseActivity {
+
+    private boolean backPressed;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,4 +37,22 @@ public class HomeActivity extends BaseActivity {
         openFragment(new ListViewAnimationsFragment());
     }
 
+    @Override
+    public void onBackPressed() {
+        if(backPressed) {
+            super.onBackPressed();
+            return;
+        }
+
+        MessageUtil.handle(this, "Press back again to leave");
+
+        backPressed = true;
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+        backPressed = false;
+    }
 }

@@ -24,19 +24,12 @@ public abstract class BaseActivity extends ActionBarActivity implements Constant
             case R.id.refresh:
                 refresh();
                 return true;
-            case R.id.settings:
-                openSettingsActivity();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     protected void refresh() {}
-
-    protected void openSettingsActivity() {
-        startActivity(new Intent(this, SettingsActivity.class));
-    }
 
     protected void openNewPostActivity() {
         startActivity(new Intent(this, NewPostActivity.class));
