@@ -17,6 +17,7 @@ import com.xegg.app.util.ColorCard;
 import com.xegg.app.util.MessageUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import it.gmariotti.cardslib.library.internal.Card;
@@ -84,13 +85,13 @@ public class ListViewAnimationsFragment extends BaseFragment {
         final List<Card> cards = new ArrayList<Card>();
 
         ColorSelector colorSelector = new ColorSelector();
-
+        Collections.sort(tags);
         for (Tag tag : tags) {
             ColorCard card = new ColorCard(getActivity());
             card.setBackgroundResourceId(R.drawable.demoextra_card_selector_color2);
             card.setTitle(tag.getName());
             card.setTag(tag.getName());
-            card.setBackgroundResourceId(colorSelector.nextColor());
+            card.setBackgroundResourceId(colorSelector.get(tag.getName()));
 
             cards.add(card);
         }

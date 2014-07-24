@@ -10,6 +10,8 @@ import com.koushikdutta.ion.Ion;
 import com.xegg.app.R;
 import com.xegg.app.model.Post;
 
+import java.util.Random;
+
 public class XEggImageViewer {
 
     private ImageView imageView;
@@ -26,10 +28,11 @@ public class XEggImageViewer {
         rotateAnimation.setDuration(5000);
 
         AlphaAnimation fadeInAnimation = new AlphaAnimation(0, 1);
+        Random random = new Random(System.currentTimeMillis());
 
         Ion.with(imageView)
-                .placeholder(R.drawable.ic_stub)
-                .error(R.drawable.ic_error)
+                .placeholder(R.drawable.egg_loading)
+                .error(random.nextInt(2) == 1 ? R.drawable.egg_error : R.drawable.egg_error2)
                 .animateLoad(rotateAnimation)
                 .animateIn(fadeInAnimation)
                 .load(post.getImage());

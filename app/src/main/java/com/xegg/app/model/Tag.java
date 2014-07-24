@@ -1,6 +1,8 @@
 package com.xegg.app.model;
 
-public class Tag extends Model {
+import java.util.Comparator;
+
+public class Tag extends Model implements Comparable<Tag> {
 
     private String name;
     private String image;
@@ -39,4 +41,10 @@ public class Tag extends Model {
         this.language = language;
     }
 
+
+
+    @Override
+    public int compareTo(Tag other) {
+        return this.getName().compareTo(other.getName());
+    }
 }

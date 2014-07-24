@@ -8,7 +8,7 @@ public class ColorSelectorTest extends TestCase {
 
     public void testFirst() {
         ColorSelector colorSelector = new ColorSelector();
-        int color = colorSelector.nextColor();
+        int color = colorSelector.get("a");
         assertEquals(R.drawable.demoextra_card_selector_color1, color);
     }
 

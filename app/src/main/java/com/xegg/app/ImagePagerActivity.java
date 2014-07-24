@@ -15,6 +15,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.koushikdutta.async.future.FutureCallback;
+import com.xegg.app.core.GlobalClass;
 import com.xegg.app.core.ShareIntentBuilder;
 import com.xegg.app.core.XEgg;
 import com.xegg.app.model.Post;
@@ -30,6 +31,8 @@ public class ImagePagerActivity extends BaseActivity {
     //TODO lidar com multiplas tags
     private int currentPage;
     private List<Post> posts;
+    private GlobalClass global;
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -48,6 +51,8 @@ public class ImagePagerActivity extends BaseActivity {
         loadPosts();
 
         createInterstitialAd();
+
+        global  = (GlobalClass) getApplicationContext();
     }
 
     private void createInterstitialAd() {
@@ -177,15 +182,13 @@ public class ImagePagerActivity extends BaseActivity {
                 setImage(imageLayout, post);
             }
 
-            if (shouldShowAd(position))
+            if (global.isShowAds())
                 showAd();
+            global.visualizedOneImage();
 
             return imageLayout;
         }
 
-        private boolean shouldShowAd(int position) {
-            return position != 0 && position % NUMBER_MODULE_FOR_SHOW_ADS == 0;
-        }
 
         private void setImage(View context, Post post) {
             ImageView imageView = (ImageView) context.findViewById(R.id.image);
